@@ -1,0 +1,17 @@
+# Build Stage
+FROM golang:1.20-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+WORKDIR /app/cmd/booking-service
+
+RUN go mod download && go build -o /go/bin/booking-service
+
+# Final Stage
+FROM alpine:3.17
+
+COPY --from=builder /go/bin/booking-service /go/bin/booking-service
+
+ENTRYPOINT ["/go/bin/booking-service"]

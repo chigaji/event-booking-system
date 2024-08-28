@@ -1,0 +1,17 @@
+# Build Stage
+FROM golang:1.20-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+WORKDIR /app/cmd/notification-service
+
+RUN go mod download && go build -o /go/bin/notification-service
+
+# Final Stage
+FROM alpine:3.17
+
+COPY --from=builder /go/bin/notification-service /go/bin/notification-service
+
+ENTRYPOINT ["/go/bin/notification-service"]
